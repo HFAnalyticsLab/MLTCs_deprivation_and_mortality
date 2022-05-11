@@ -42,7 +42,7 @@ In addition these scripts make use of our in house package [**aurumpipeline**](h
 
 ### Getting started
 
-If you have access to a CPRD Aurum sample then you can run the scripts in order to re-produce this work. 
+If you have access to a CPRD Aurum sample then you can run the scripts in order to re-produce this work. For ontario, the computer programs may rely upon coding templates or macros that are unique to ICES and are therefore either inaccessible or may require modification.
 
 ## Authors
 
