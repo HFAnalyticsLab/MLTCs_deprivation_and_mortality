@@ -20,7 +20,7 @@ This study used health administrative data from Ontario (information to be added
 
 ### England analysis (completed in R) 
 
-The process to create an analysis dataset from our CPRD sample and clinical codelists, can be found in our project exploring [*MLTC's and mortality in ethnic groups*](https://github.com/HFAnalyticsLab/MLTCs_and_mortality_in_ethnic_groups) and is [**01_Process_data.R**](https://github.com/HFAnalyticsLab/MLTCs_and_mortality_in_ethnic_groups/blob/main/01_Process_data.R)
+The process to create an analysis dataset from our CPRD sample and clinical codelists, can be found in our project exploring [MLTC's and mortality in diverse ethnic groups](https://github.com/HFAnalyticsLab/MLTCs_and_mortality_in_ethnic_groups) and is [**01_Process_data.R**](https://github.com/HFAnalyticsLab/MLTCs_and_mortality_in_ethnic_groups/blob/main/01_Process_data.R)
 
 There are three R scripts that create variables and then run models to test our hypotheses:  
 * 02SES_prepdata.R - Derives variables 
