@@ -11,7 +11,7 @@ library(readxl)
 library(janitor)
 library(tidyverse)
 library(THFstyle)
-
+library(here)
 
 # functions ---------------------------------------------------------------
 
@@ -28,7 +28,25 @@ hr.deprivation<- function (df=canada_working){
   assign(deparse(substitute(df)),w.env$df, envir=.GlobalEnv)
 }
 
+txt.clean<-function(df=canada_all){
+  w.env <- new.env()
+  w.env$df <- df
+names(w.env$df)[1]<-"col"
+  w.env$df<-w.env$df %>% 
+    filter(!str_detect(col,"-"), !str_detect(col, "dx")) %>% 
+    mutate(col=gsub(" ",";",col)) %>%
+    separate(col,c("cons", "freq", "percent","cum"),"[0-9];", extra="merge", fill="right") %>% 
+    mutate_all(~gsub(";","",.)) %>% 
+    mutate(cons=c(0:6)) %>% 
+    mutate(freq=substr(freq,2,str_length(freq))) %>% 
+    mutate(freq=gsub(",","",freq)) %>% 
+    select(-cum)
 
+  w.env$df[1:3]<-lapply(w.env$df[1:3], FUN=function(y){as.numeric(y)})
+  
+  assign(deparse(substitute(df)),w.env$df, envir=.GlobalEnv)
+  
+}
 
 colfun<-colorRampPalette(c('#dd0031','#53a9cd'))
 cc<-colfun(10)
@@ -37,6 +55,10 @@ cc<-colfun(10)
 
 
 # load data ---------------------------------------------------------------
+
+canada_path<-here('data/')
+england_path<-here('data/')
+outputs_path<-here('outputs/')
 
 canada_working<-read_excel(str_c(canada_path, 'CA_results_models.xlsx'),sheet='Model 2a', skip=7)
 
@@ -126,8 +148,9 @@ df<-rbind(canada_working, canada_older, england_working, england_older)
 df %>% 
   mutate(lab_country=factor(country, levels=c("England", "Canada (Ontario)"), labels=c("England", "Ontario (Canada)")),
          lab_age=factor(age_group, levels=c("Working age (18-64 years)", "Older age (65+ years)"), 
-                        labels=c("Working age adults (18-64 years)", "Older adults (65+ years)"))) %>% 
-  ggplot(., aes(x=as.factor(deprivation), y=hr, group=lab_age, colour=lab_age))+
+                        labels=c("Working age adults (18-64 years)", "Older adults (65+ years)")),
+         lab_dep=factor(deprivation, levels=c(1:10), labels=c("1-Least Deprived", 2:9, "10-Most Deprived"))) %>% 
+  ggplot(., aes(x=lab_dep, y=hr, group=lab_age, colour=lab_age))+
   geom_line()+
   geom_point()+
   scale_y_continuous(trans='log10')+
@@ -138,7 +161,7 @@ df %>%
   labs(x= "Deprivation", y="Mortality Hazard Ratio (log-scaled)", title="")+
   theme(plot.title = element_text(size=14),
         legend.text=element_text(size=14), legend.position="bottom", 
-        axis.text.x=element_text(size=14, angle = 0, hjust=0.45),axis.text.y=element_text(size=14),
+        axis.text.x=element_text(size=10, angle = 80, hjust=0.5),axis.text.y=element_text(size=14),
         strip.text=element_text(size=12), axis.line.x = element_line(colour='grey20'))
 
 
@@ -407,50 +430,6 @@ df.interact %>%
 ggsave(str_c(outputs_path, 'interaction_working_graph_log2.png'),dpi=300,
        width = 10, height =6.5)
 
-# Trial -------------------------------------------------------------------
-
-
-df.interact %>% 
-  filter(dep==1) %>% 
-  mutate(lab=factor(num, levels=c(0:6), labels=c(0:5,"6+")),
-         lab_dep= factor(dep, levels=c(1:10), labels=c("1-Least Deprived", c(2:9), "10-Most Deprived"))) %>% 
-  ggplot(., aes(x=lab, y=hr, group=country, colour=country))+
-  geom_line()+
-  geom_point()+
-  theme_THF()+
-  facet_grid(rows = vars(age_group))+
-  scale_fill_THF()+
-  scale_colour_THF()+
-  labs(x= "Number of conditions", y="Mortality Hazard Ratio", title="")+
-  theme(plot.title = element_text(size=14),
-        legend.text=element_text(size=14), legend.position="bottom", 
-        axis.text.x=element_text(size=14, angle = 0, hjust=0.45),axis.text.y=element_text(size=14),
-        strip.text=element_text(size=12), axis.line.x = element_line(colour='grey20'))
-
-ggsave(str_c(outputs_path, 'number_conds_graph.png'),dpi=300,
-       width = 10, height =6.5)
-
-
-df.interact %>% 
-  filter(num==0) %>% 
-  mutate(lab_dep= factor(dep, levels=c(1:10), labels=c("1-Least Deprived", c(2:9), "10-Most Deprived"))) %>% 
-  ggplot(., aes(x=lab_dep, y=hr, group=country, colour=country))+
-  geom_line()+
-  geom_point()+
-  theme_THF()+
-  facet_grid(rows = vars(age_group))+
-  scale_fill_THF()+
-  scale_colour_THF()+
-  labs(x= "Deprivation", y="Mortality Hazard Ratio", title="")+
-  theme(plot.title = element_text(size=14),
-        legend.text=element_text(size=14), legend.position="bottom", 
-        axis.text.x=element_text(size=14, angle = 0, hjust=0.45),axis.text.y=element_text(size=14),
-        strip.text=element_text(size=12), axis.line.x = element_line(colour='grey20'))
-
-ggsave(str_c(outputs_path, 'deprivation_model4_graph.png'),dpi=300,
-       width = 10, height =6.5)
-
-
 
 # Number of conditions linear graph ---------------------------------------
 
@@ -511,4 +490,70 @@ df %>%
 ggsave(str_c(outputs_path, 'number_conds_linear_graph.png'),dpi=300,
        width = 10, height =6.5)
 
+
+
+# Proportion of conditions ------------------------------------------------
+
+canada_all<-read.delim(str_c(canada_path, 'number_of_conditions_capped_canada.txt'), nrows=10)
+canada_working<-read.delim(str_c(canada_path, 'number_of_conditions_capped_canada.txt'), skip=18, nrows=10)
+canada_older<-read.delim(str_c(canada_path, 'number_of_conditions_capped_canada.txt'), skip=33, nrows=10)
+
+txt.clean(df=canada_all)
+txt.clean(df=canada_working)
+txt.clean(df=canada_older)
+
+canada_older$age<-"Older adults (65+ years)"
+canada_working$age<-"Working age (18-64 years)"
+
+
+england_working<-read_csv(str_c(england_path, 'anne_suppltable11a.csv'))
+england_older<-read_csv(str_c(england_path, 'anne_suppltable11b.csv'))
+
+
+england_working<-england_working %>% 
+  select(c(cat,n,percent))
+
+names(england_working)[1:3]<-c("cons", "freq", "percent")
+england_working$age<-"Working age (18-64 years)"
+
+england_older<-england_older %>% 
+  select(c(cat,n,percent))
+
+names(england_older)[1:3]<-c("cons", "freq", "percent")
+
+england_older$age<-"Older adults (65+ years)"
+
+canada<-rbind(canada_working, canada_older)
+
+canada$country<-"Ontario (Canada)"
+
+england<-rbind(england_working, england_older)
+
+england$country<-"England"
+
+df<-rbind(canada, england)
+
+
+df<-df %>% 
+  group_by(age,country) %>% 
+  mutate(n_total=sum(freq)) %>% 
+  mutate(prop=freq/n_total)
+
+df %>% 
+  mutate(age_lab=factor(age, levels=c("Working age (18-64 years)", "Older adults (65+ years)"))) %>% 
+  ggplot(aes(x=cons, y=prop, colour=country, fill=country))+
+  geom_col()+
+  facet_grid(rows=vars(country), cols=vars(age_lab))+
+  scale_y_continuous(labels=scales::percent)+
+  theme_THF()+
+  scale_fill_THF()+
+  scale_colour_THF()+
+  labs(x= "Number of conditions", y="Distribution of number of conditions (%)", title="")+
+  theme(plot.title = element_text(size=14),
+        legend.text=element_text(size=14), legend.position="none", 
+        axis.text.x=element_text(size=14, angle = 0, hjust=0.45),axis.text.y=element_text(size=14),
+        strip.text=element_text(size=12), axis.line.x = element_line(colour='grey20'))
+
+ggsave(str_c(outputs_path, 'prop_graphs.png'),dpi=300,
+       width = 10, height =6.5)
 
