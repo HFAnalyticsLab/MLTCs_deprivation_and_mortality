@@ -129,7 +129,7 @@ prevalence<-all_data2 %>%
 write.csv(prevalence, file=(str_c(outputs_path, 'anne_test6.csv')))
 
 
-##Need to do the descriptive
+#Descriptive for age, sex, imd and event 
 
 
 tab<-all_data2 %>% 
@@ -140,4 +140,29 @@ tab<-all_data2 %>%
   mutate_if(is.character, ~replace(., is.na(.), ""))
 
 write.csv(tab, file=(str_c(outputs_path, 'anne_test4x.csv')))
+
+#Descriptive for censored 
+
+all_data2<-all_data2 %>% 
+  mutate(lost_follow_up=case_when(event==2~ "died", 
+                                  censoring_date_cprd=="2019-12-31" | years_in_study_cprd==5 ~ "complete",
+                                  censoring_date_cprd!="2019-12-31" ~ "censored")) %>% 
+  mutate(years_follow_up=case_when(event==2~ "died", 
+                                   years_in_study_cprd==5~ "complete", 
+                                   years_in_study_cprd<5 & years_in_study_cprd>=4 ~ "4+ years", 
+                                   years_in_study_cprd<4 & years_in_study_cprd>=3 ~ "3+ years", 
+                                   years_in_study_cprd<3 & years_in_study_cprd>=2 ~ "2+ years", 
+                                   years_in_study_cprd<2 & years_in_study_cprd>=1 ~ "1+ year", 
+                                   years_in_study_cprd<1  ~ "< 1 year"))
+
+
+
+tab2<-all_data2 %>% 
+  select(lost_follow_up,years_follow_up, years_in_study_cprd) %>% 
+  tbl_summary(statistic=list(all_continuous()~ "{mean} ({sd})"), digits= everything()~ 1) %>% 
+  as_tibble() %>% 
+  mutate_if(is.character, ~replace(., is.na(.), ""))
+
+
+write.csv(tab2, "days_and_years_follow_up.csv")
 

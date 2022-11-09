@@ -51,7 +51,7 @@ names(w.env$df)[1]<-"col"
 colfun<-colorRampPalette(c('#dd0031','#53a9cd'))
 cc<-colfun(10)
 
-# Deprivation graph -------------------------------------------------------
+# Figure 1- Deprivation graph -------------------------------------------------------
 
 
 # load data ---------------------------------------------------------------
@@ -170,7 +170,7 @@ ggsave(str_c(outputs_path, 'deprivation_graph_log_scale.png'),dpi=300,
 
 
 
-# Interaction graph -------------------------------------------------------
+# Figure 2 and 3- interaction graphs -------------------------------------------------------
 
 ##load data
 
@@ -366,10 +366,11 @@ df.interact %>%
   scale_fill_manual(values=cc)+
   labs(x= "Number of conditions", y="Mortality Hazard Ratio (log-scaled)", title="")+
   guides(color = guide_legend(nrow = 1))+
-  theme(plot.title = element_text(size=14),
-        legend.text=element_text(size=8), legend.position="bottom", legend.box = 'horizontal',
-        axis.text.x=element_text(size=12, angle = 0, hjust=0.45),axis.text.y=element_text(size=12),
-        strip.text=element_text(size=12), axis.line.x = element_line(colour='grey20'))
+  theme(plot.title = element_text(size=16),
+        legend.text=element_text(size=16), legend.position="bottom", legend.box = 'horizontal',
+        axis.text.x=element_text(size=16, angle = 0, hjust=0.45),axis.text.y=element_text(size=16),
+        axis.title=element_text(size=16),
+        strip.text=element_text(size=16), axis.line.x = element_line(colour='grey20'))
 
 
 # df.interact %>% 
@@ -394,7 +395,7 @@ df.interact %>%
 
 
 ggsave(str_c(outputs_path, 'interaction_older_graph_log.png'),dpi=300,
-       width = 10, height =6.5)
+       width = 16, height =11.5)
 
   # theme(plot.title = element_text(size=14),
   #       legend.text=element_text(size=8), legend.position="bottom", legend.box = 'horizontal',
@@ -421,17 +422,18 @@ df.interact %>%
   scale_fill_manual(values=cc)+
   labs(x= "Number of conditions", y="Mortality Hazard Ratio (log-scaled)", title="")+
   guides(color = guide_legend(nrow = 1))+
-  theme(plot.title = element_text(size=14),
-        legend.text=element_text(size=8), legend.position="bottom", legend.box = 'horizontal',
-        axis.text.x=element_text(size=12, angle = 0, hjust=0.45),axis.text.y=element_text(size=12),
-        strip.text=element_text(size=12), axis.line.x = element_line(colour='grey20'))
+  theme(plot.title = element_text(size=16),
+        legend.text=element_text(size=16), legend.position="bottom", legend.box = 'horizontal',
+        axis.text.x=element_text(size=16, angle = 0, hjust=0.45),axis.text.y=element_text(size=16),
+        axis.title=element_text(size=16),
+        strip.text=element_text(size=16), axis.line.x = element_line(colour='grey20'))
 
 
 ggsave(str_c(outputs_path, 'interaction_working_graph_log2.png'),dpi=300,
-       width = 10, height =6.5)
+       width = 16, height =11.5)
 
 
-# Number of conditions linear graph ---------------------------------------
+# Supplementary figure 2- number of conditions linear graph ---------------------------------------
 
 ##load data 
 
@@ -481,18 +483,19 @@ df %>%
   scale_fill_THF()+
   scale_colour_THF()+
   labs(x= "Number of conditions", y="Mortality Hazard Ratio (log-scaled)", title="")+
-  theme(plot.title = element_text(size=14),
-        legend.text=element_text(size=14), legend.position="none", 
-        axis.text.x=element_text(size=14, angle = 0, hjust=0.45),axis.text.y=element_text(size=14),
-        strip.text=element_text(size=12), axis.line.x = element_line(colour='grey20'))
+  theme(plot.title = element_text(size=16),
+        legend.text=element_text(size=16), legend.position="none", 
+        axis.text.x=element_text(size=16, angle = 0, hjust=0.45),axis.text.y=element_text(size=16),
+        axis.title=element_text(size=16),
+        strip.text=element_text(size=16), axis.line.x = element_line(colour='grey20'))
 
 
 ggsave(str_c(outputs_path, 'number_conds_linear_graph.png'),dpi=300,
-       width = 10, height =6.5)
+       width = 16, height =11.5)
 
 
 
-# Proportion of conditions ------------------------------------------------
+# supplementary figure 1- Distirbution of number of conditions ------------------------------------------------
 
 canada_all<-read.delim(str_c(canada_path, 'number_of_conditions_capped_canada.txt'), nrows=10)
 canada_working<-read.delim(str_c(canada_path, 'number_of_conditions_capped_canada.txt'), skip=18, nrows=10)
