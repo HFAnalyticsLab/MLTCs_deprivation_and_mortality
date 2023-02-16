@@ -29,7 +29,8 @@ There are three R scripts that create variables and then run models to test our 
 
 ### Ontario analysis (completed in Stata) 
 
-(to be added) 
+* ONanalysis.do - Stata code for the Ontario analysis. Modelling only. 
+Descriptive statistics were done in SAS using in-house macros. 
 
 ### Visualising the data (completed in R)
 
@@ -59,9 +60,9 @@ The following R packages (available on CRAN) are needed:
 In addition these scripts make use of our in house package [**aurumpipeline**](https://github.com/HFAnalyticsLab/aurumpipeline) and [**THFstyle**](https://github.com/THF-evaluative-analytics/THFstyle) available here on GitHub.
 
 
-## Authors
+## Code Authors
 
-Add link to paper [here]
+Link to paper will be added [here]
 
 * Anne Alarilla - [Twitter](https://twitter.com/alarillaanne)
 * Luke Mondor 
