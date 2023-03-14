@@ -1,6 +1,6 @@
 # Socioeconomic gradient in mortality of working age and older adults with multiple long-term conditions in England and Ontario, Canada
 
-#### Project Status: [In progress]
+#### Project Status: [Published](https://link.springer.com/content/pdf/10.1186/s12889-023-15370-y.pdf)
 
 ## Project Description
 
